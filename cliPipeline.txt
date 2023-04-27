@@ -1,0 +1,23 @@
+
+trigger:
+- master
+stages:
+- stage: 'cli'
+  displayName: 'Deploy'
+  jobs: 
+  - job: clijob
+  - deployment: DeployWeb
+    displayName: deploy Web App
+    pool:
+      vmImage: 'Ubuntu-latest'
+    environment: authorization
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureCLI@2
+            inputs:
+             azureSubscription: 'experiment'
+             scriptType: 'bash'
+             scriptLocation: 'inlineScript'
+             inlineScript: az vm create --resource-group RGlocalContext --name Alberto --image Win2022AzureEditionCore --public-ip-sku Standard --admin-username Martin --admin-password P@ssw0rd1234
