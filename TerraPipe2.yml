@@ -1,0 +1,44 @@
+trigger:
+  branches:
+    include:
+    - main
+pool:
+  vmImage: 'ubuntu-latest'
+steps:
+- task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+  displayName: 'Terraform Init'
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    backendAzureRmResourceGroupName: 'rgterra421'
+    backendAzureRmStorageAccountName: 'ihopeitsnottaken421'
+    backendAzureRmContainerName: 'blob421'
+    backendAzureRmKey: 'tf.state'
+    backendServiceArm: 'experiment2'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Tf2'
+    backendType: azurerm
+- task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+  displayName: 'Terraform Validate'
+  inputs:
+    command: 'validate'
+    workingDirectory: '$(Build.SourcesDirectory)/Tf2'
+
+- task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+  displayName: 'Terraform Plan'
+  inputs:
+    command: 'plan'
+    commandOptions: '-input=false -var-file="terraform.tfvars" -out=tfplan'
+    workingDirectory: '$(Build.SourcesDirectory)/Tf2'
+    environmentServiceName: 'experiment2'
+    environmentServiceNameAzureRM: 'experiment2'
+    inputs:
+    input: 'false'
+
+- task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+  displayName: 'Terraform Apply'
+  inputs:
+    command: 'apply'
+    workingDirectory: '$(Build.SourcesDirectory)/Tf2'
+    environmentServiceName: 'experiment2'
+    environmentServiceNameAzureRM: 'experiment2'
+    commandOptions: '-auto-approve -input=false tfplan'
