@@ -1,0 +1,22 @@
+trigger:
+- build-agent
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: AzurePowerShell@5
+  inputs:
+    azureSubscription: 'experiment'
+    ScriptType: 'InlineScript'
+    Inline: 
+      $VMLocalAdminUser = "LocalAdminUser" 
+
+      $VMLocalAdminSecurePassword = ConvertTo-SecureString "P@ssw0rd1" -AsPlainText -Force 
+
+      $Credential = New-Object System.Management.Automation.PSCredential ($VMLocalAdminUser, $VMLocalAdminSecurePassword)  
+
+      New-AzResourceGroup -Name 'charlie' -Location 'uksouth' -force 
+      
+      New-AzVm -Credential $Credential -ResourceGroupName 'charlie'   -Name 'Omega'   -Location 'uksouth'   -Image Debian `  -size Standard_B2s  -PublicIpAddressName myPubIP   -OpenPorts 80  -GenerateSshKey  -SshKeyName mySSHKey
+      azurePowerShellVersion: 'LatestVersion'
