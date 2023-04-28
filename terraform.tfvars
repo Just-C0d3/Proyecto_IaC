@@ -1,0 +1,57 @@
+name = "SubmarinoAmarillo"
+resource_group_name = "TractorAzul"
+location = "eastus"
+address_space = ["10.0.0.0/16"]
+azurerm_resource_group = "rgterra420"
+virtual_network_name = "SubmarinoAmarillo"
+azurerm_resource_group_name = "TractorAzul"
+azurerm_subnet_name = "SubSubmarinoAmarillo"
+addres_prefixes = ["10.0.1.0/24"]
+azurerm_public_ip_name = "Ipw11"
+azurerm_public_ip_name2 = "Ipw221"
+azurerm_public_ip_name3 = "Ipw222"
+allocation_method = "Dynamic"
+azurerm_network_security_group_name = "Coche_Policia"
+azurerm_network_interface_name =  "avion_violeta"
+ip_configuration_name2 = "avion_marron" 
+ip_configuration_name3 = "avion_granizo" 
+azurerm_network_interface_name2 =  "avion_verde"
+azurerm_network_interface_name3 =  "avion_nieve"
+ip_configuration_name = "avion_morado" 
+azurerm_storage_account_name = "camioncisterna"
+account_tier = "Standard"
+account_replication_type = "LRS"
+azurerm_windows_virtual_machine_name = "w11"
+admin_username = "Martin"
+admin_password = "P@ssw0rd1"
+network_interface_id = [ "/subscriptions/753812e2-49f3-4084-abf2-ab439fbb8cc0/resourceGroups/TractorAzul/providers/Microsoft.Network/networkInterfaces/avion_violeta" ]
+publisher = "MicrosoftWindowsDesktop"
+offer = "Windows-11"
+sku = "win11-21h2-pro"
+version2 = "latest"
+publisher2 = "MicrosoftWindowsServer"
+offer2 = "WindowsServer"
+sku2 = "2022-datacenter-azure-edition"
+
+servers = {
+  Server1 = {
+    name = "server1"
+    admin_username = "Martin"
+    admin_password  = "P@ssw0rd1"
+    location  = "eastus"
+    resource_group_name = "TractorAzul"
+    network_interface_ids = ["/subscriptions/753812e2-49f3-4084-abf2-ab439fbb8cc0/resourceGroups/TractorAzul/providers/Microsoft.Network/networkInterfaces/avion_verde"]
+    size ="Standard_DS1_v2" 
+    os_disk_name = "MyOsDisk2"
+  },
+  Server2 = {
+    name = "server2"
+    admin_username = "MartinII"
+    admin_password  = "P@ssw0rd1"
+    location  = "eastus"
+    resource_group_name = "TractorAzul"
+    network_interface_ids = ["/subscriptions/753812e2-49f3-4084-abf2-ab439fbb8cc0/resourceGroups/TractorAzul/providers/Microsoft.Network/networkInterfaces/avion_nieve"]  
+    size = "Standard_DS1_v2"
+    os_disk_name = "MyOsDisk3"
+  }
+}
