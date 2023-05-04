@@ -31,31 +31,10 @@ variable "azurerm_public_ip_name" {
 variable "azurerm_public_ip_name2" {
     type = string
 }
-variable "azurerm_public_ip_name3" {
-    type = string
-}
 variable "allocation_method" {
     type = string
 }
 variable "azurerm_network_security_group_name" {
-    type = string
-}
-variable "azurerm_network_interface_name" {
-    type = string
-}
-variable "azurerm_network_interface_name2" {
-    type = string
-}
-variable "azurerm_network_interface_name3" {
-    type = string
-}
-variable "ip_configuration_name" {
-    type = string
-}
-variable "ip_configuration_name2" {
-    type = string
-}
-variable "ip_configuration_name3" {
     type = string
 }
 variable "azurerm_storage_account_name" {
@@ -67,37 +46,22 @@ variable "account_replication_type" {
 variable "account_tier" {
     type = string
 }
-variable "azurerm_windows_virtual_machine_name" {
+variable "caching" {
     type = string
 }
-variable "admin_username" {
+variable "storage_account_type" {
     type = string
 }
-variable "admin_password" {
+variable "azurerm_public_ip_name1" {
     type = string
 }
 variable "network_interface_id" {
-    type = list(string)
-}
-variable "publisher" {
     type = string
 }
-variable "offer" {
+variable "network_interface_id2" {
     type = string
 }
-variable "sku" {
-    type = string
-}
-variable "version2" {
-    type = string
-}
-variable "publisher2" {
-    type = string
-}
-variable "offer2" {
-    type = string
-}
-variable "sku2" {
+variable "network_interface_id3" {
     type = string
 }
 variable "servers" {
@@ -110,18 +74,14 @@ variable "servers" {
     network_interface_ids = list(string)
     size = string
     os_disk_name = string
-
+    publisher = string
+    offer = string 
+    sku = string
+    version = string
+    name  = string
+    private_ip_address_allocation = string
+    azurerm_storage_account_name = string
+    private_address = optional(string)
   }))
-  default = {
-    "key" = {
-    name = "server1"
-    admin_username = "Martin"
-    admin_password  = "P@ssw0rd1"
-    location  = "eastus"
-    resource_group_name = "TractorAzul"
-    network_interface_ids = ["/subscriptions/753812e2-49f3-4084-abf2-ab439fbb8cc0/resourceGroups/TractorAzul/providers/Microsoft.Network/networkInterfaces/avion_violeta"]
-    size ="Standard_DS1_v2" 
-    os_disk_name = "MyOsDisk"
-    }
-  }
+
 }
