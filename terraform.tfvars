@@ -8,44 +8,37 @@ azurerm_resource_group_name = "TractorAzul"
 azurerm_subnet_name = "SubSubmarinoAmarillo"
 addres_prefixes = ["10.0.1.0/24"]
 azurerm_public_ip_name = "Ipw11"
-azurerm_public_ip_name2 = "Ipw221"
-azurerm_public_ip_name3 = "Ipw222"
-allocation_method = "Dynamic"
+azurerm_public_ip_name1 = "IpSv1"
+azurerm_public_ip_name2 = "IpSv2"
 azurerm_network_security_group_name = "Coche_Policia"
-azurerm_network_interface_name =  "avion_violeta"
-ip_configuration_name2 = "avion_marron" 
-ip_configuration_name3 = "avion_granizo" 
-azurerm_network_interface_name2 =  "avion_verde"
-azurerm_network_interface_name3 =  "avion_nieve"
-ip_configuration_name = "avion_morado" 
 azurerm_storage_account_name = "camioncisterna"
 account_tier = "Standard"
 account_replication_type = "LRS"
-azurerm_windows_virtual_machine_name = "w11"
-admin_username = "Martin"
-admin_password = "P@ssw0rd1"
-network_interface_id = [ "/subscriptions/753812e2-49f3-4084-abf2-ab439fbb8cc0/resourceGroups/TractorAzul/providers/Microsoft.Network/networkInterfaces/avion_violeta" ]
-publisher = "MicrosoftWindowsDesktop"
-offer = "Windows-11"
-sku = "win11-21h2-pro"
-version2 = "latest"
-publisher2 = "MicrosoftWindowsServer"
-offer2 = "WindowsServer"
-sku2 = "2022-datacenter-azure-edition"
-
+caching = "ReadWrite"
+storage_account_type = "Premium_LRS"
+network_interface_id = "/subscriptions/753812e2-49f3-4084-abf2-ab439fbb8cc0/resourceGroups/TractorAzul/providers/Microsoft.Network/networkInterfaces/avion_violeta"
+network_interface_id2 = "/subscriptions/753812e2-49f3-4084-abf2-ab439fbb8cc0/resourceGroups/TractorAzul/providers/Microsoft.Network/networkInterfaces/avion_verde"
+network_interface_id3 = "/subscriptions/753812e2-49f3-4084-abf2-ab439fbb8cc0/resourceGroups/TractorAzul/providers/Microsoft.Network/networkInterfaces/avion_nieve"
+allocation_method = "Dynamic"
 servers = {
   Server1 = {
-    name = "server1"
     admin_username = "Martin"
     admin_password  = "P@ssw0rd1"
     location  = "eastus"
     resource_group_name = "TractorAzul"
     network_interface_ids = ["/subscriptions/753812e2-49f3-4084-abf2-ab439fbb8cc0/resourceGroups/TractorAzul/providers/Microsoft.Network/networkInterfaces/avion_verde"]
     size ="Standard_DS1_v2" 
-    os_disk_name = "MyOsDisk2"
+    os_disk_name = "MyOsDisk1"
+    publisher = "MicrosoftWindowsServer"
+    offer = "WindowsServer" 
+    sku = "2022-datacenter-azure-edition"
+    version = "latest"
+    name  = "avion_morado"         
+    private_ip_address_allocation = "Dynamic"
+    azurerm_storage_account_name = "avion_violeta"
+
   },
   Server2 = {
-    name = "server2"
     admin_username = "MartinII"
     admin_password  = "P@ssw0rd1"
     location  = "eastus"
@@ -53,5 +46,31 @@ servers = {
     network_interface_ids = ["/subscriptions/753812e2-49f3-4084-abf2-ab439fbb8cc0/resourceGroups/TractorAzul/providers/Microsoft.Network/networkInterfaces/avion_nieve"]  
     size = "Standard_DS1_v2"
     os_disk_name = "MyOsDisk3"
-  }
+    publisher = "MicrosoftWindowsServer"
+    offer = "WindowsServer" 
+    sku = "2022-datacenter-azure-edition"
+    version = "latest"
+    name  = "avion_marron"         
+    private_ip_address_allocation = "Dynamic"
+    azurerm_storage_account_name = "avion_verde"
+    
+  },
+    Cliente = {
+    admin_username = "MartinII"
+    admin_password  = "P@ssw0rd1"
+    location  = "eastus"
+    resource_group_name = "TractorAzul"
+    network_interface_ids = ["/subscriptions/753812e2-49f3-4084-abf2-ab439fbb8cc0/resourceGroups/TractorAzul/providers/Microsoft.Network/networkInterfaces/avion_violeta"]  
+    size = "Standard_DS1_v2"
+    os_disk_name = "MyOsDisk4"
+    publisher = "MicrosoftWindowsDesktop"
+    offer = "Windows-11" 
+    sku = "win11-21h2-pro"
+    version = "latest"
+    name  = "avion_granizo"         
+    private_ip_address_allocation = "Static"
+    azurerm_storage_account_name = "avion_nieve"
+    private_address = "10.0.1.4"
+    }
 }
+
