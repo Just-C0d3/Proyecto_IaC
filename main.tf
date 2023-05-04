@@ -37,8 +37,8 @@ resource "azurerm_public_ip" "ip11" {
     azurerm_subnet.SubSubmarinoAmarillo
   ]
 }
-resource "azurerm_public_ip" "ip221" {
-  name                = var.azurerm_public_ip_name2
+resource "azurerm_public_ip" "Server1" {
+  name                = var.azurerm_public_ip_name1
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = var.allocation_method
@@ -46,8 +46,8 @@ resource "azurerm_public_ip" "ip221" {
     azurerm_subnet.SubSubmarinoAmarillo
   ]
 }
-resource "azurerm_public_ip" "ip222" {
-  name                = var.azurerm_public_ip_name3
+resource "azurerm_public_ip" "Server2" {
+  name                = var.azurerm_public_ip_name2
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = var.allocation_method
@@ -59,6 +59,7 @@ resource "azurerm_network_security_group" "Coche_Policia" {
   name                = var.azurerm_network_security_group_name
   location            = var.location
   resource_group_name = var.azurerm_resource_group_name
+  depends_on = [ azurerm_resource_group.TractorAzul ]
 
   security_rule {
     name                       = "RDP"
@@ -83,44 +84,23 @@ resource "azurerm_network_security_group" "Coche_Policia" {
     destination_address_prefix = "*"
   }
 }
-resource "azurerm_network_interface" "avion_violeta" {
-  name                = var.azurerm_network_interface_name
-  location            = var.location
-  resource_group_name = var.resource_group_name
+resource "azurerm_network_interface" "aviones" {
+  for_each = var.servers
+  name                = each.value.name
+  location            = each.value.location
+  resource_group_name = each.value.resource_group_name
 
   ip_configuration {
-    name                          = var.ip_configuration_name
+    name                          = each.value.name
     subnet_id                     = azurerm_subnet.SubSubmarinoAmarillo.id
-    private_ip_address_allocation = var.allocation_method
+    private_ip_address_allocation = each.value.private_ip_address_allocation
+    private_ip_address = each.value.private_ip_address_allocation == "Dynamic" ? null : each.value.private_address
     public_ip_address_id          = azurerm_public_ip.ip11.id
   }
 }
-resource "azurerm_network_interface" "avion_verde" {
-  name                = var.azurerm_network_interface_name2
-  location            = var.location
-  resource_group_name = var.resource_group_name
-
-  ip_configuration {
-    name                          = var.ip_configuration_name2
-    subnet_id                     = azurerm_subnet.SubSubmarinoAmarillo.id
-    private_ip_address_allocation = var.allocation_method
-    public_ip_address_id          = azurerm_public_ip.ip221.id
-  }
-}
-resource "azurerm_network_interface" "avion_nieve" {
-  name                = var.azurerm_network_interface_name3
-  location            = var.location
-  resource_group_name = var.resource_group_name
-
-  ip_configuration {
-    name                          = var.ip_configuration_name3
-    subnet_id                     = azurerm_subnet.SubSubmarinoAmarillo.id
-    private_ip_address_allocation = var.allocation_method
-    public_ip_address_id          = azurerm_public_ip.ip222.id
-  }
-}
 resource "azurerm_network_interface_security_group_association" "asociacion" {
-  network_interface_id      = azurerm_network_interface.avion_violeta.id
+  for_each = var.servers
+  network_interface_id      = azurerm_network_interface.aviones[each.key].id
   network_security_group_id = azurerm_network_security_group.Coche_Policia.id
 }
 resource "azurerm_storage_account" "camioncisterna" {
@@ -129,28 +109,7 @@ resource "azurerm_storage_account" "camioncisterna" {
   resource_group_name      = var.resource_group_name
   account_tier             = var.account_tier
   account_replication_type = var.account_replication_type
-}
-resource "azurerm_windows_virtual_machine" "w11" {
-  name                  = var.azurerm_windows_virtual_machine_name
-  admin_username        = var.admin_username
-  admin_password        = var.admin_password
-  location              = var.location
-  resource_group_name   = var.azurerm_resource_group_name
-  network_interface_ids = var.network_interface_id
-  size                  = "Standard_DS1_v2"
-
-  os_disk {
-    name                 = "myOsDisk"
-    caching              = "ReadWrite"
-    storage_account_type = "Premium_LRS"
-  }
-
-  source_image_reference {
-    publisher = var.publisher
-    offer     = var.offer
-    sku       = var.sku
-    version   = var.version2
-  }
+  depends_on = [ azurerm_resource_group.TractorAzul ]
 }
 resource "azurerm_windows_virtual_machine" "servers" {
   for_each = var.servers
@@ -161,17 +120,18 @@ resource "azurerm_windows_virtual_machine" "servers" {
   resource_group_name   = each.value.resource_group_name
   network_interface_ids = each.value.network_interface_ids
   size                  = each.value.size
-
+  depends_on = [ azurerm_resource_group.TractorAzul ]
+  
   os_disk {
     name                 = each.value.os_disk_name
-    caching              = "ReadWrite"
-    storage_account_type = "Premium_LRS"
+    caching              = var.caching
+    storage_account_type = var.storage_account_type
   }
 
   source_image_reference {
-    publisher = var.publisher2
-    offer     = var.offer2
-    sku       = var.sku2
-    version   = var.version2
+    publisher = each.value.publisher
+    offer     = each.value.offer
+    sku       = each.value.sku
+    version   = each.value.version
   }
-}
+} 
