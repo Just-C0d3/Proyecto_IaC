@@ -1,0 +1,113 @@
+stages:
+- stage: A
+  pool: Default
+  jobs: 
+  - job: DeployService
+  - deployment: DeployIis
+    displayName: DeployIis
+    environment: SERVER2
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: $inst = ((Get-WindowsFeature -name "Web-Server").Installed); if (!$inst) {Install-WindowsFeature -Name Web-Server   -IncludeManagementTools} 
+- stage: B
+  dependsOn: A
+  pool: Default
+  jobs: 
+  - job: DeployWebPool
+  - deployment: DeployPool
+    displayName: DeployPool
+    environment: SERVER2
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: $inst = (Get-IISAppPool -name "PiscinaAutomatica"); if (!$inst) {New-WebAppPool -Name "PiscinaAutomatica" -Force}
+- stage: C
+  dependsOn: B
+  pool: Default
+  jobs: 
+  - job: DeployWebsite
+  - deployment: DeployWeb
+    displayName: DeployWeb
+    environment: SERVER2
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: New-Item -Path 'C:\inetpub\wwwroot\pitagoras' -ItemType Directory -Force ;New-Website -Name "pitagoras" -HostHeader "www.pitagoras.local" -Port 8089 -PhysicalPath  C:\inetpub\wwwroot\pitagoras  -ApplicationPool PiscinaAutomatica -Force
+- stage: D
+  dependsOn: C
+  pool: Default
+  jobs: 
+  - job: DeployVirtDirectory
+  - deployment: DeployVDirectory
+    displayName: DeployVDirectory
+    environment: SERVER2
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: New-WebVirtualDirectory -Site "Pitagoras" -Name "Diogenes" -PhysicalPath "C:\inetpub\wwwroot\pitagoras" -Force
+- stage: E
+  dependsOn: D
+  pool: Default
+  jobs: 
+  - job: DeployDefDocu
+  - deployment: DeployDefDOc
+    displayName: DeployDefDOc
+    environment: SERVER2
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script:  $inst = (Get-WebConfigurationProperty -Filter /system.webServer/defaultDocument/files/add -PSPath "IIS:\sites\pitagoras" -name index); 
+               if (!$inst) {Add-WebConfiguration -Filter "/system.webServer/defaultDocument/files/add" -PSPath "IIS:\sites\pitagoras" -AtIndex 0 -Value @{value="index.aspx" } -Force} 
+- stage: F
+  dependsOn: E
+  pool: Default
+  jobs: 
+  - job: Copyindex
+  - deployment: SyncIndex
+    displayName: SyncIndex
+    environment: SERVER2
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: Copy-Item $(Agent.BuildDirectory)\s\index.aspx  C:\inetpub\wwwroot\pitagoras -Force
+- stage: G
+  dependsOn: F
+  pool: Default
+  jobs: 
+  - job: DeployWebBinding
+  - deployment: DeployBinding
+    displayName: DeployBinding
+    environment: SERVER2
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: New-WebBinding -Name "pitagoras" -IPAddress "*" -Port 8087 -Force
