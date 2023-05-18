@@ -1,2 +1,2 @@
 # Proyecto_IaC
-Sumario del codigo empleado en el despliegue del proyecto
+En este codigo se despliega un un balanceador de cargas junto con un grupo de seguridad, una subred y dos maquinas virtuales.
