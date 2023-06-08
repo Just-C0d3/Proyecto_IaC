@@ -31,6 +31,9 @@ variable "azurerm_public_ip_name" {
 variable "azurerm_public_ip_name2" {
     type = string
 }
+variable "azurerm_public_ip_name3" {
+    type = string
+}
 variable "allocation_method" {
     type = string
 }
@@ -74,6 +77,9 @@ variable "servers" {
     network_interface_ids = list(string)
     size = string
     os_disk_name = string
+    os_type = string
+    storage_account_type = string
+    caching= string
     publisher = string
     offer = string 
     sku = string
@@ -82,6 +88,9 @@ variable "servers" {
     private_ip_address_allocation = string
     azurerm_storage_account_name = string
     private_address = optional(string)
+    azurerm_public_ip_name = string
+    disable_password_authentication = string
+    provision_vm_agent = string
   }))
 
 }
